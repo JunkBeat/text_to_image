@@ -14,7 +14,7 @@ def split_text(font, text, max_width):
             else:
                 test_line = words[0]
 
-            if font.getsize(test_line)[0] <= max_width:
+            if font.getlength(test_line) <= max_width:
                 line = test_line
                 words.pop(0)
             else:
@@ -30,7 +30,7 @@ def create_image(font_path, font_size, text, max_width, max_height, alignment):
     while True:
         font = ImageFont.truetype(font_path, font_size)
         lines = split_text(font, text, max_width)
-        image_height = sum(font.getsize(line)[1] for line in lines if line)
+        image_height = sum((font.getbbox(line)[3] - font.getbbox(line)[1]) for line in lines if line)
         
         if image_height <= max_height:
             break
@@ -43,7 +43,9 @@ def create_image(font_path, font_size, text, max_width, max_height, alignment):
     y_text = 0  
     for line in lines:
         if line:  
-            line_width, line_height = font.getsize(line)
+            bbox = font.getbbox(line)
+            line_width = font.getlength(line)
+            line_height = bbox[3] - bbox[1]
             if alignment == 'center':
                 x_text = (max_width - line_width) / 2 
             else:  # left alignment
@@ -51,7 +53,7 @@ def create_image(font_path, font_size, text, max_width, max_height, alignment):
             draw.text((x_text, y_text), line.strip(), font=font, fill=(0, 0, 0))
             y_text += line_height
         else:
-            y_text += font.getsize('A')[1] 
+            y_text += font.getbbox('A')[3] - font.getbbox('A')[1] 
 
     return image
 
