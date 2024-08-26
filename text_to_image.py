@@ -70,7 +70,7 @@ if __name__ == "__main__":
     image = create_image(
         args.font_path, 
         args.font_size, 
-        args.text, 
+        args.text.replace('\\n', '\n').replace('\\r', '\r'), 
         args.width, 
         args.height, 
         args.alignment
